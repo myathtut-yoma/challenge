@@ -50,4 +50,16 @@ trait ResponseTrait
             'message' => $message
         ], Response::HTTP_BAD_REQUEST);
     }
+
+    /**
+     * @param $data
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function invoiceResponse($data)
+    {
+        return response()->json([
+            'status' => Response::HTTP_OK,
+            'data' => $data
+        ], Response::HTTP_OK);
+    }
 }

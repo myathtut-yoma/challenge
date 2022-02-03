@@ -2,31 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\InternetServiceProvider\Mpt;
-use App\Services\InternetServiceProvider\Ooredoo;
+use App\Http\Helpers\ResponseTrait;
+use App\Http\Requests\InvoiceRequest;
+use App\Services\InternetServiceProvider\InvoiceProviderInterface;
 use Illuminate\Http\Request;
 
 class InternetServiceProviderController extends Controller
 {
-    public function getMptInvoiceAmount(Request $request)
+    use ResponseTrait;
+    private $invoiceProvider;
+
+    /**
+     * InternetServiceProviderController constructor.
+     * @param InvoiceProviderInterface $invoiceProvider
+     */
+    public function __construct(InvoiceProviderInterface $invoiceProvider)
     {
-        $mpt = new Mpt();
-        $mpt->setMonth($request->get('month') ?: 1);
-        $amount = $mpt->calculateTotalAmount();
-        
-        return response()->json([
-            'data' => $amount
-        ]);
+
+        $this->invoiceProvider = $invoiceProvider;
+
     }
-    
+
+    public function getMptInvoiceAmount(InvoiceRequest $request)
+    {
+        return $this->invoiceResponse($this->invoiceProvider->calculateTotalAmount($request->get('month'), 'mpt'));
+    }
+
     public function getOoredooInvoiceAmount(Request $request)
     {
-        $ooredoo = new Ooredoo();
-        $ooredoo->setMonth($request->get('month') ?: 1);
-        $amount = $ooredoo->calculateTotalAmount();
-        
-        return response()->json([
-            'data' => $amount
-        ]);
+        return $this->invoiceResponse($this->invoiceProvider->calculateTotalAmount($request->get('month'), 'ooredoo'));
     }
 }
