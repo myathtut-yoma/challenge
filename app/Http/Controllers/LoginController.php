@@ -2,57 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\ResponseTrait;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    use ResponseTrait;
+
+    /**
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(LoginRequest $request)
     {
-        if (!$request->email) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'email is required'
-            ]);
-        }
-        
-        if(strlen($request->email) < 6) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'email is invalid'
-            ]);
-        }
-    
-        if (!$request->password) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'password is required'
-            ]);
-        }
-        if(strlen($request->password) < 8) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'password is invalid'
-            ]);
-        }
-    
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return response()->json([
-                'status'  => 404,
-                'message' => 'Model not found.'
-            ]);
-        }
-    
+        $user = User::user($request->email)->first();
+
         if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status'  => 404,
-                'message' => 'Invalid credentials'
-            ]);
+            return $this->invalidResponse('Invalid credentials', Response::HTTP_NOT_FOUND);
         }
-        
-        return response()->json([
+
+        return $this->validResponseWithData([
             'user' => $user,
             'token' => $user->createToken('User-Token')->plainTextToken
         ]);
