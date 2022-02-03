@@ -27,4 +27,27 @@ trait ResponseTrait
     {
         return response()->json($data, Response::HTTP_OK);
     }
+
+    /**
+     * @param $message
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function successResponse($message)
+    {
+        return response()->json([
+            'status' => 200,
+            'message' => $message
+        ], Response::HTTP_OK);
+    }
+    /**
+     * @param $message
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function errorResponse($message)
+    {
+        return response()->json([
+            'status' => Response::HTTP_BAD_REQUEST,
+            'message' => $message
+        ], Response::HTTP_BAD_REQUEST);
+    }
 }
