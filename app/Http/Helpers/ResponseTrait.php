@@ -55,7 +55,7 @@ trait ResponseTrait
      * @param $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function invoiceResponse($data)
+    public function dataResponse($data)
     {
         return response()->json([
             'status' => Response::HTTP_OK,

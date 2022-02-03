@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\EmployeeManagement\Staff;
-use Illuminate\Http\Request;
+use App\Http\Helpers\ResponseTrait;
+use App\Services\EmployeeManagement\Employee;
 
 class StaffController extends Controller
 {
+    use ResponseTrait;
     protected $staff;
-    
-    public function __construct(Staff $staff)
+
+    public function __construct(Employee $employee)
     {
-        $this->staff = $staff;
+        $this->staff = $employee;
     }
-    
+
     public function payroll()
     {
-        $data = $this->staff->salary();
-    
-        return response()->json([
-            'data' => $data
-        ]);
+        return $this->dataResponse($this->staff->salary());
     }
 }
