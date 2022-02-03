@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\InternetServiceProviderController;
-use App\Http\Controllers\JobController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,14 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    
-    Route::get('posts', [PostController::class, 'list']);
-    Route::post('posts/reaction', [PostController::class, 'toggleReaction']);
-    
-    Route::post('mpt/invoice-amount', [InternetServiceProviderController::class, 'getMptInvoiceAmount']);
-    Route::post('ooredoo/invoice-amount', [InternetServiceProviderController::class, 'getOoredooInvoiceAmount']);
-    
-    Route::post('job/apply', [JobController::class, 'apply']);
-    
-    Route::post('staff/salary', [StaffController::class, 'payroll']);
+
+    foreach (File::allFiles(__DIR__ . '/v1') as $route_file) {
+        require $route_file->getPathname();
+    }
 });
